@@ -14,23 +14,25 @@ function Log_Parsing () {
     while read -r line ; do
         timestamp=$(echo "$line" | awk -F '] ' '{print $1}' | tr -d '[]')  
         log_level=$(echo "$line" |awk -F  ']' '{print $2}' | awk -F ' ' '{print $1}') 
-        message=$(echo "$line" |awk -F  ']' '{print $2}' | awk -F ' ' '{$1="";print $0}'|tr -d ' ')  
+        message=$(echo "$line" |awk -F  ']' '{print $2}' | sed 's/^[[:space:]]*//')  
+        echo "| Timestamp | Log Level | Message |"
+        echo "|-----------|-----------|---------|"
         
         case "${log_level}" in
             WARN)
-                echo "[$timestamp] $log_level: $message" 
+                echo "| $timestamp | $log_level | $message |"
                 
             ;;
             INFO)
-                echo "[$timestamp] $log_level: $message" 
+                echo "| $timestamp | $log_level | $message |"
 
             ;;
             ERROR)
-                echo "[$timestamp] $log_level: $message" 
+                echo "| $timestamp | $log_level | $message |"
                 
             ;;
             DEBUG)
-                echo "[$timestamp] $log_level: $message" 
+                echo "| $timestamp | $log_level | $message |"
             ;;
             *)
             
@@ -56,11 +58,12 @@ function Filtering () {
     while read -r line ; do
         timestamp=$(echo "$line" | awk -F '] ' '{print $1}' | tr -d '[]')   
         log_level=$(echo "$line" |awk -F  ']' '{print $2}' | awk -F ' ' '{print $1}') 
-        message=$(echo "$line" |awk -F  ']' '{print $2}' | awk -F ' ' '{$1="";print $0}'|tr -d ' ') 
+        message=$(echo "$line" |awk -F  ']' '{print $2}' | sed 's/^[[:space:]]*//') 
 
         if [[ " ${log_levels_needed[*]} " =~ ${log_level} ]]; then
-            echo "[$timestamp] $log_level: $message" 
+            echo "| $timestamp | $log_level | $message |"
             ((log_count++))
+    
         fi
       
     done <$log_file
@@ -80,16 +83,16 @@ function Error_Warning_Summary () {
     while read -r line ; do
         timestamp=$(echo "$line" | awk -F '] ' '{print $1}' | tr -d '[]')  
         log_level=$(echo "$line" |awk -F  ']' '{print $2}' | awk -F ' ' '{print $1}') 
-        message=$(echo "$line" |awk -F  ']' '{print $2}' | awk -F ' ' '{$1="";print $0}'|tr -d ' ') 
+        message=$(echo "$line" |awk -F  ']' '{print $2}' | sed 's/^[[:space:]]*//') 
         case "${log_level}" in
             WARN)
-                echo "[$timestamp] $log_level: $message" 
+                echo "| $timestamp | $log_level | $message |"
                 ((count_warn++))
                 
             ;;
             
             ERROR)
-                echo "[$timestamp] $log_level: $message" 
+                echo "| $timestamp | $log_level | $message |" 
                 ((count_error++))
 
             ;;
@@ -155,7 +158,7 @@ function Report () {
     while read -r line; do
         timestamp=$(echo "$line" | awk -F '] ' '{print $1}' | tr -d '[]')
         log_level=$(echo "$line" | awk -F ']' '{print $2}' | awk -F ' ' '{print $1}')
-        message=$(echo "$line" | awk -F ']' '{print $2}' | awk -F ' ' '{$1="";print $0}' | tr -d ' ')
+        message=$(echo "$line" | awk -F ']' '{print $2}' | sed 's/^[[:space:]]*//')
         case "$log_level" in
             WARN)
                 echo "| $timestamp | $log_level | $message |"
