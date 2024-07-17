@@ -52,25 +52,33 @@ function Log_Parsing () {
 function Filtering () {
 
     echo "----------------------------Filtering--------------------------------"
-    log_count=0
-    echo "Enter log levels :"
+    declare -A log_level_counts=()
+    echo "Enter log levels (separated by spaces):"
     read -r log_levels
-    mapfile -t log_levels_needed <<< "$log_levels"            ##-->spliit log levels needed in an array 
-    while read -r line ; do
-        timestamp=$(echo "$line" | awk -F '] ' '{print $1}' | tr -d '[]')   
-        log_level=$(echo "$line" |awk -F  ']' '{print $2}' | awk -F ' ' '{print $1}') 
-        message=$(echo "$line" |awk -F  ']' '{print $2}' | sed 's/^[[:space:]]*//') 
+    IFS=' ' read -ra logs_to_track <<< "$log_levels"
+
+    # Initialize counts for all log levels to 0
+    for log_level in "${logs_to_track[@]}"; do
+        log_level_counts[$log_level]=0
+    done
+
+    while read -r line; do
+        timestamp=$(echo "$line" | awk -F '] ' '{print $1}' | tr -d '[]')
+        log_level=$(echo "$line" | awk -F ']' '{print $2}' | awk -F ' ' '{print $1}')
+        message=$(echo "$line" | awk -F ']' '{print $2}' | sed 's/^[[:space:]]*//')
         message="${message#* }"
 
-        if [[ " ${log_levels_needed[*]} " =~ ${log_level} ]]; then
+        if [[ " ${logs_to_track[*]} " =~ ${log_level} ]]; then
             echo "| $timestamp | $log_level | $message |"
-            ((log_count++))
-    
+            ((log_level_counts[$log_level]++))
         fi
-      
-    done <$log_file
-    echo "Log Level found $log_count time(s)"
-    echo "---------------------------------------------------------------------" 
+    done < "$log_file"
+
+    echo "Log level counts:"
+    for log_level in "${logs_to_track[@]}"; do
+        echo "$log_level: ${log_level_counts[$log_level]}"
+    done
+    echo "---------------------------------------------------------------------"
      
 }
 
