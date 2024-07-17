@@ -17,6 +17,7 @@ function Log_Parsing () {
         timestamp=$(echo "$line" | awk -F '] ' '{print $1}' | tr -d '[]')  
         log_level=$(echo "$line" |awk -F  ']' '{print $2}' | awk -F ' ' '{print $1}') 
         message=$(echo "$line" |awk -F  ']' '{print $2}' | sed 's/^[[:space:]]*//')  
+        message="${message#* }"
         
         case "${log_level}" in
             WARN)
@@ -59,6 +60,7 @@ function Filtering () {
         timestamp=$(echo "$line" | awk -F '] ' '{print $1}' | tr -d '[]')   
         log_level=$(echo "$line" |awk -F  ']' '{print $2}' | awk -F ' ' '{print $1}') 
         message=$(echo "$line" |awk -F  ']' '{print $2}' | sed 's/^[[:space:]]*//') 
+        message="${message#* }"
 
         if [[ " ${log_levels_needed[*]} " =~ ${log_level} ]]; then
             echo "| $timestamp | $log_level | $message |"
@@ -84,6 +86,7 @@ function Error_Warning_Summary () {
         timestamp=$(echo "$line" | awk -F '] ' '{print $1}' | tr -d '[]')  
         log_level=$(echo "$line" |awk -F  ']' '{print $2}' | awk -F ' ' '{print $1}') 
         message=$(echo "$line" |awk -F  ']' '{print $2}' | sed 's/^[[:space:]]*//') 
+        message="${message#* }"
         case "${log_level}" in
             WARN)
                 echo "| $timestamp | $log_level | $message |"
@@ -159,6 +162,7 @@ function Report () {
         timestamp=$(echo "$line" | awk -F '] ' '{print $1}' | tr -d '[]')
         log_level=$(echo "$line" | awk -F ']' '{print $2}' | awk -F ' ' '{print $1}')
         message=$(echo "$line" | awk -F ']' '{print $2}' | sed 's/^[[:space:]]*//')
+        message="${message#* }"
         case "$log_level" in
             WARN)
                 echo "| $timestamp | $log_level | $message |"
