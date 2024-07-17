@@ -11,12 +11,12 @@ log_file=/home/ayat/file.log
 function Log_Parsing () {
 
     echo "--------------------------Log Parsing--------------------------------"
+    echo "| Timestamp | Log Level | Message |"
+    echo "|-----------|-----------|---------|"
     while read -r line ; do
         timestamp=$(echo "$line" | awk -F '] ' '{print $1}' | tr -d '[]')  
         log_level=$(echo "$line" |awk -F  ']' '{print $2}' | awk -F ' ' '{print $1}') 
         message=$(echo "$line" |awk -F  ']' '{print $2}' | sed 's/^[[:space:]]*//')  
-        echo "| Timestamp | Log Level | Message |"
-        echo "|-----------|-----------|---------|"
         
         case "${log_level}" in
             WARN)
