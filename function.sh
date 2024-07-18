@@ -43,6 +43,7 @@ function Log_Parsing () {
                                                                   
     done <$log_file
     echo "---------------------------------------------------------------------" 
+    Operations
       
 }
 
@@ -79,6 +80,7 @@ function Filtering () {
         echo "$log_level: ${log_level_counts[$log_level]}"
     done
     echo "---------------------------------------------------------------------"
+    Operations
      
 }
 
@@ -112,6 +114,7 @@ function Error_Warning_Summary () {
     done <$log_file
     echo "number of errors :$count_error ,number of warnings :$count_warn"
     echo "---------------------------------------------------------------------" 
+    Operations
     
 }
 
@@ -151,6 +154,7 @@ function Error_Warning_Summary () {
     echo "$event: ${event_counts[$event]}"
     done
     echo "---------------------------------------------------------------------"
+    Operations
 }
 
 ##   5. Report Generation:Generate a report summarizing the findings, 
@@ -202,4 +206,42 @@ function Report () {
     echo "- Debug: $count_debug"
     echo ""
     echo "----------------------------------------------------------------------"
+    Operations
 }
+
+function Operations() {
+
+    echo "Please select an operation:"
+    echo "1. Log parsing ."
+    echo "2. Filtering ."
+    echo "3. Error and warn summary ."
+    echo "4. Event tracking ."
+    echo "5. Report ."
+    echo "6. Exit ."
+    read -r input 
+    case "${input}" in
+        1)
+            Log_Parsing
+        ;;
+        2)
+            Filtering
+        ;;
+        3)
+            Error_Warning_Summary 
+        ;;
+        4)
+            Event_Tracking
+        ;;
+        5)
+            Report
+        ;;
+        6)
+           return 
+        ;;
+        *)
+            echo "default (none of above)"
+        ;;
+    esac
+    
+}
+
