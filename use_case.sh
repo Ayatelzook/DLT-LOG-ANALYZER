@@ -8,12 +8,7 @@ fi
  
 function main () {
 
-   declare path=$1
-   Report
-   Filtering
-   Event_Tracking
-   Error_Warning_Summary
-   Log_Parsing
+   Operations
 }
 
-main "$1"
+main 
